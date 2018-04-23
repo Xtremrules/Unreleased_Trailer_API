@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trailer_NET_API", "Trailer_NET_API\Trailer_NET_API.csproj", "{F801B6DC-8189-44FB-9315-E069613492A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trailer_NET_Library", "Trailer_NET_Library\Trailer_NET_Library.csproj", "{BAA8073E-49E8-4759-82B7-81F230E0A69F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F801B6DC-8189-44FB-9315-E069613492A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F801B6DC-8189-44FB-9315-E069613492A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F801B6DC-8189-44FB-9315-E069613492A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAA8073E-49E8-4759-82B7-81F230E0A69F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAA8073E-49E8-4759-82B7-81F230E0A69F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAA8073E-49E8-4759-82B7-81F230E0A69F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAA8073E-49E8-4759-82B7-81F230E0A69F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
