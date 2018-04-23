@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trailer_NET_Library.Entities
 {
-    class Movie
+    public class Movie
     {
     }
 }
