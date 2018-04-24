@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Trailer_NET_Library.Abstract;
 
 namespace Trailer_NET_Library.Entities
 {
-    class Image
+    public class Image: Entity<Guid>
     {
+        public string Title { get; set; }
+        public string File_Name { get; set; }
+        public string URI { get; set; }
+
+        public virtual ICollection<Movie> Movies { get; set; }
     }
 }

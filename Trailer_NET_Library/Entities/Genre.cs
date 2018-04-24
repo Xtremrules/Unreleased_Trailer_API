@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Trailer_NET_Library.Abstract;
 
 namespace Trailer_NET_Library.Entities
 {
-    class Genre
+    public class Genre: Entity<Guid>
     {
+        public string Title { get; set; }
     }
 }
