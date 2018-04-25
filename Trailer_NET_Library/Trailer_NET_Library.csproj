@@ -42,8 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\BaseEntity.cs" />
+    <Compile Include="Abstract\Disposable.cs" />
     <Compile Include="Abstract\Entity.cs" />
     <Compile Include="Abstract\IEntity.cs" />
+    <Compile Include="Abstract\IEntityBaseRepository.cs" />
     <Compile Include="Entities\Genre.cs" />
     <Compile Include="Entities\Image.cs" />
     <Compile Include="Entities\Movie.cs" />
