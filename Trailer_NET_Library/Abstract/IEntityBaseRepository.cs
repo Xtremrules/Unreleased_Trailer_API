@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Trailer_NET_Library.Abstract
 {
+    [Obsolete("You wont be able to access dbconxet if you use this class", false)]
     public interface IEntityBaseRepository<T> where T: BaseEntity
     {
         Task<IEnumerable<T>> AllIncludingAsync(params Expression<Func<T, object>>[] includeProperties);

@@ -10,6 +10,7 @@ using Trailer_NET_Library.Abstract;
 
 namespace Trailer_NET_DL.Repository
 {
+    [Obsolete("You wont be able to access dbconxet if you use this class", false)]
     public class EntityBaseRepository<T> : IEntityBaseRepository<T> where T : BaseEntity
     {
         protected AppDbContext _dbContext;
