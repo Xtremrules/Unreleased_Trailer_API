@@ -23,7 +23,7 @@ namespace Trailer_NET_API.Controllers
             this._unitOfWork = _unitOfWork;
         }
 
-        [Route("all"), HttpGet]
+        [Route("all-with-released-movies"), HttpGet]
         // GET: api/Movies including released
         public async Task<IEnumerable<Movie>> GetAll()
         {
@@ -34,11 +34,6 @@ namespace Trailer_NET_API.Controllers
         public async Task<IEnumerable<Movie>> Get()
         {
             return await _movieRepo.AllIncludingAsync(x => DateTime.Now > x.Release_Date);
-        }
-
-        public async Task<IEnumerable<Movie>> Get10()
-        {
-
         }
 
         // GET: api/Movies/5
