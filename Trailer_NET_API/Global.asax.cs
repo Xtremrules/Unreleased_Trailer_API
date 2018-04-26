@@ -13,7 +13,6 @@ namespace Trailer_NET_API
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
             GlobalConfiguration.Configuration.Filters.Add(new ValidateViewModelAttribute());
-            DI.Initialize();
         }
     }
 }
