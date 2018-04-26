@@ -98,10 +98,6 @@
     <Compile Include="Infrastructure\IDbFactory.cs" />
     <Compile Include="Infrastructure\IUnitOfWork.cs" />
     <Compile Include="Infrastructure\UnitOfWork.cs" />
-    <Compile Include="Migrations\201804251144224_initial.cs" />
-    <Compile Include="Migrations\201804251144224_initial.Designer.cs">
-      <DependentUpon>201804251144224_initial.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\EntityBaseRepository.cs" />
@@ -115,11 +111,6 @@
       <Project>{baa8073e-49e8-4759-82b7-81f230e0a69f}</Project>
       <Name>Trailer_NET_Library</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201804251144224_initial.resx">
-      <DependentUpon>201804251144224_initial.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
