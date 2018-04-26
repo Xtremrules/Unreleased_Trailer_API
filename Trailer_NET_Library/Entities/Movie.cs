@@ -6,7 +6,7 @@ using Trailer_NET_Library.Abstract;
 
 namespace Trailer_NET_Library.Entities
 {
-    public class Movie: Entity<Guid>
+    public class Movie: Entity<int>
     {
         [Required]
         public string Title { get; set; }
@@ -17,11 +17,13 @@ namespace Trailer_NET_Library.Entities
         public string Writer { get; set; }
         public string Producer { get; set; }
 
-        public Guid? ImageID { get; set; }
-        public Guid? GenreID { get; set; }
+        public int? ImageID { get; set; }
+        public int? GenreID { get; set; }
 
+        [DataType(DataType.Date)]
         public DateTime Release_Date { get; set; }
         public string Trailer_Url { get; set; }
+        [DataType(DataType.DateTime)]
         public DateTime Created_Date { get; set; }
 
         [ForeignKey("ImageID")]
