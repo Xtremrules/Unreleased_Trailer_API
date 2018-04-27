@@ -123,12 +123,22 @@ namespace Trailer_NET_API.Controllers
             return _db.Database.SqlQuery<string>(query, UserID).ToString();
         }
 
+        [HttpGet, Route("released-liked")]
         public async Task<IEnumerable<Movie>> Get_Liked_released([FromBody]string UserId)
         {
             var query = "SELECT * FROM Movies Where Release_Date >= @p0 AND ID IN " +
                 "( SELECT MovieID FROM Liked_Table Where UserID = @p1 )";
 
             return await _db.Movie.SqlQuery(query, DateTime.Now, UserId).ToListAsync();
+        }
+
+        [HttpPost, Route("add-liked")]
+        public IHttpActionResult Add_Liked([FromBody]AddLiked model)
+        {
+            var query = "Insert Into Liked_Table(UserId, MovieID) Values (@p0,@p1)";
+
+            _db.Database.ExecuteSqlCommand(query, model.UserID, model.MovieID);
+            return Ok();
         }
 
         [HttpPost, Route("")]
