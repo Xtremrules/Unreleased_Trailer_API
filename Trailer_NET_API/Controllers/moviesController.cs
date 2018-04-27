@@ -28,22 +28,22 @@ namespace Trailer_NET_API.Controllers
         // GET: api/Movies
         public async Task<IEnumerable<Movie>> Get()
         {
-            var query = "SELECT TOP 10 * FROM Movie WHERE @P0 > Release_Date";
+            var query = "SELECT TOP 10 * FROM Movies WHERE @P0 > Release_Date";
             return await _db.Database.SqlQuery<Movie>(query, DateTime.Now).ToListAsync();
         }
 
-        [Route("/{id}"), HttpGet]
+        //[Route("/{id}"), HttpGet]
         // GET: api/Movies/5
         public async Task<IHttpActionResult> Get(int id)
         {
-            var query = "SELECT TOP 1 * FROM Movie WHERE ID = @p0";
+            var query = "SELECT TOP 1 * FROM Movies WHERE ID = @p0";
             return Ok(await _db.Movie.SqlQuery(query, id).FirstOrDefaultAsync());
         }
 
         [HttpGet, Route("paging")]
         public async Task<IEnumerable<Movie>> Get([FromUri]PagingParameterModel model)
         {
-            var query = "SELECT * FROM Movie WHERE @P0 > Release_Date";
+            var query = "SELECT * FROM Movies WHERE @P0 > Release_Date";
 
             // Return List of Movies  
             var source = await _db.Movie.SqlQuery(query, DateTime.Now).ToListAsync();
@@ -89,11 +89,11 @@ namespace Trailer_NET_API.Controllers
             return items;
         }
 
-        [HttpGet, Route("search/{q:string}/{key:string}")]
+        [HttpGet, Route("search/{q}/{key}")]
         public async Task<IEnumerable<Movie>> Get([FromBody]string q, string key = null)
         {
-            var query = "SELECT * FROM Movie WHERE @P0 > Release_Date And Title like '%@p1%'";
-            var queryKey = "SELECT * FROM Movie Where Title like '%@p0%'";
+            var query = "SELECT * FROM Movies WHERE @P0 > Release_Date And Title like '%@p1%'";
+            var queryKey = "SELECT * FROM Movies Where Title like '%@p0%'";
 
             var movies = new List<Movie>();
 
@@ -105,7 +105,7 @@ namespace Trailer_NET_API.Controllers
             return movies;
         }
 
-        [HttpGet, Route("liked/{userid:string}")]
+        [HttpGet, Route("liked/{userid}")]
         public async Task<IEnumerable<Movie>> GetLiked([FromBody]string UserID)
         {
             var query = "SELECT * FROM Movies Where ID IN " + 
@@ -114,7 +114,7 @@ namespace Trailer_NET_API.Controllers
             return await _db.Movie.SqlQuery(query, UserID).ToListAsync();
         }
 
-        [HttpGet, Route("liked-number/{userid:string}")]
+        [HttpGet, Route("liked-number/{userid}")]
         public string GetLiked_Number([FromBody]string UserID)
         {
             var query = "SELECT Count(*) FROM Movies Where ID IN " +
@@ -131,6 +131,7 @@ namespace Trailer_NET_API.Controllers
             return await _db.Movie.SqlQuery(query, DateTime.Now, UserId).ToListAsync();
         }
 
+        [HttpPost, Route("")]
         // POST: api/Movies
         public async Task<IHttpActionResult> Post([FromBody]Movie model)
         {
@@ -158,7 +159,7 @@ namespace Trailer_NET_API.Controllers
         // DELETE: api/Movies/5
         public async Task Delete(int id)
         {
-            var query = "DELETE FROM Movie WHERE ID = @p0";
+            var query = "DELETE FROM Movies WHERE ID = @p0";
             try
             {
                 await _db.Database.ExecuteSqlCommandAsync(query, id);
