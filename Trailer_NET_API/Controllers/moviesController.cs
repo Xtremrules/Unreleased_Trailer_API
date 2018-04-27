@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
+using Trailer_NET_API.Models;
 using Trailer_NET_DL.Concrete;
 using Trailer_NET_Library.Entities;
 
@@ -20,6 +24,7 @@ namespace Trailer_NET_API.Controllers
             return await  _db.Movie.ToListAsync();
         }
 
+        [Route(""), HttpGet]
         // GET: api/Movies
         public async Task<IEnumerable<Movie>> Get()
         {
@@ -27,12 +32,103 @@ namespace Trailer_NET_API.Controllers
             return await _db.Database.SqlQuery<Movie>(query, DateTime.Now).ToListAsync();
         }
 
-
+        [Route("/{id}"), HttpGet]
         // GET: api/Movies/5
         public async Task<IHttpActionResult> Get(int id)
         {
             var query = "SELECT TOP 1 * FROM Movie WHERE ID = @p0";
             return Ok(await _db.Movie.SqlQuery(query, id).FirstOrDefaultAsync());
+        }
+
+        [HttpGet, Route("paging")]
+        public async Task<IEnumerable<Movie>> Get([FromUri]PagingParameterModel model)
+        {
+            var query = "SELECT * FROM Movie WHERE @P0 > Release_Date";
+
+            // Return List of Movies  
+            var source = await _db.Movie.SqlQuery(query, DateTime.Now).ToListAsync();
+
+            // Get's No of Rows Count   
+            int count = source.Count;
+
+            // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
+            int CurrentPage = model.pageNumber;
+
+            // Parameter is passed from Query string if it is null then it default Value will be pageSize:20  
+            int PageSize = model.pageSize;
+
+            // Display TotalCount to Records to User  
+            int TotalCount = count;
+
+            // Calculating Totalpage by Dividing (No of Records / Pagesize)  
+            int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
+
+            // Returns List of Customer after applying Paging   
+            var items = source.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+
+            // if CurrentPage is greater than 1 means it has previousPage  
+            var previousPage = CurrentPage > 1 ? "Yes" : "No";
+
+            // if TotalPages is greater than CurrentPage means it has nextPage  
+            var nextPage = CurrentPage < TotalPages ? "Yes" : "No";
+
+            // Object which we are going to send in header   
+            var paginationMetadata = new
+            {
+                totalCount = TotalCount,
+                pageSize = PageSize,
+                currentPage = CurrentPage,
+                totalPages = TotalPages,
+                previousPage,
+                nextPage
+            };
+
+            // Setting Header  
+            HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
+            // Returing List of Customers Collections  
+            return items;
+        }
+
+        [HttpGet, Route("search/{q:string}/{key:string}")]
+        public async Task<IEnumerable<Movie>> Get([FromBody]string q, string key = null)
+        {
+            var query = "SELECT * FROM Movie WHERE @P0 > Release_Date And Title like '%@p1%'";
+            var queryKey = "SELECT * FROM Movie Where Title like '%@p0%'";
+
+            var movies = new List<Movie>();
+
+            if (key != null)
+                movies = await _db.Movie.SqlQuery(query, DateTime.Now, q).ToListAsync();
+            else
+                movies = await _db.Movie.SqlQuery(queryKey, q).ToListAsync();
+
+            return movies;
+        }
+
+        [HttpGet, Route("liked/{userid:string}")]
+        public async Task<IEnumerable<Movie>> GetLiked([FromBody]string UserID)
+        {
+            var query = "SELECT * FROM Movies Where ID IN " + 
+                "( SELECT MovieID FROM Liked_Table Where UserID = @p0 )";
+
+            return await _db.Movie.SqlQuery(query, UserID).ToListAsync();
+        }
+
+        [HttpGet, Route("liked-number/{userid:string}")]
+        public string GetLiked_Number([FromBody]string UserID)
+        {
+            var query = "SELECT Count(*) FROM Movies Where ID IN " +
+                "( SELECT MovieID FROM Liked_Table Where UserID = @p0 )";
+
+            return _db.Database.SqlQuery<string>(query, UserID).ToString();
+        }
+
+        public async Task<IEnumerable<Movie>> Get_Liked_released([FromBody]string UserId)
+        {
+            var query = "SELECT * FROM Movies Where Release_Date >= @p0 AND ID IN " +
+                "( SELECT MovieID FROM Liked_Table Where UserID = @p1 )";
+
+            return await _db.Movie.SqlQuery(query, DateTime.Now, UserId).ToListAsync();
         }
 
         // POST: api/Movies
