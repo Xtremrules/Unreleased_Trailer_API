@@ -28,7 +28,7 @@ namespace Trailer_NET_API.Controllers
         // GET: api/Movies
         public async Task<IEnumerable<Movie>> Get()
         {
-            var query = "SELECT TOP 10 * FROM Movies WHERE @P0 > Release_Date";
+            var query = "SELECT TOP 10 * FROM Movies WHERE @P0 <= Release_Date";
             return await _db.Database.SqlQuery<Movie>(query, DateTime.Now).ToListAsync();
         }
 
@@ -43,7 +43,7 @@ namespace Trailer_NET_API.Controllers
         [HttpGet, Route("paging")]
         public async Task<IEnumerable<Movie>> Get([FromUri]PagingParameterModel model)
         {
-            var query = "SELECT * FROM Movies WHERE @P0 > Release_Date";
+            var query = "SELECT * FROM Movies WHERE @P0 <= Release_Date";
 
             // Return List of Movies  
             var source = await _db.Movie.SqlQuery(query, DateTime.Now).ToListAsync();
@@ -92,7 +92,7 @@ namespace Trailer_NET_API.Controllers
         [HttpGet, Route("search/{q}/{key}")]
         public async Task<IEnumerable<Movie>> Get([FromBody]string q, string key = null)
         {
-            var query = "SELECT * FROM Movies WHERE @P0 > Release_Date And Title like '%@p1%'";
+            var query = "SELECT * FROM Movies WHERE @P0 <= Release_Date And Title like '%@p1%'";
             var queryKey = "SELECT * FROM Movies Where Title like '%@p0%'";
 
             var movies = new List<Movie>();
