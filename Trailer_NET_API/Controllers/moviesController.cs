@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -143,16 +146,40 @@ namespace Trailer_NET_API.Controllers
 
         [HttpPost, Route("")]
         // POST: api/Movies
-        public async Task<IHttpActionResult> Post([FromBody]Movie model)
+        public async Task<HttpResponseMessage> Post([FromBody]Movie model)
         {
             if (ModelState.IsValid)
             {
+                string imageName = null;
+                var httpRequest = HttpContext.Current.Request;
+                //Upload Image
+                var postedFile = httpRequest.Files["Image"];
+                //Check if file is uploaded
+                if (postedFile == null)
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Select Image");
+
+                //Create custom filename
+                imageName = new String(Path.GetFileNameWithoutExtension(postedFile.FileName).Take(10).ToArray()).Replace(" ", "-");
+                imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(postedFile.FileName);
+                var filePath = HttpContext.Current.Server.MapPath("~/Image/" + imageName);
+                postedFile.SaveAs(filePath);
+
+                Image image = new Image()
+                {
+                    Title = model.Title,
+                    File_Name = imageName,
+                    URI = "~/Image/" + imageName
+                    //ImageCaption = httpRequest["ImageCaption"],
+                };
+
                 model.Created_Date = DateTime.Now;
+                model.ImageID = image.ID;
+                _db.Image.Add(image);
                 _db.Movie.Add(model);
                 await _db.SaveChangesAsync();
-                return Ok();
+                return Request.CreateResponse(HttpStatusCode.Created);
             }
-            return BadRequest(ModelState);
+            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
         }
 
         // PUT: api/Movies/5
