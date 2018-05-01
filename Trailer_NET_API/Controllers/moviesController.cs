@@ -150,36 +150,47 @@ namespace Trailer_NET_API.Controllers
         {
             if (ModelState.IsValid)
             {
-                //string imageName = null;
-                //var httpRequest = HttpContext.Current.Request;
-                ////Upload Image
-                //var postedFile = httpRequest.Files["Image"];
-                ////Check if file is uploaded
-                //if (postedFile == null)
-                //    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Select Image");
-
-                ////Create custom filename
-                //imageName = new String(Path.GetFileNameWithoutExtension(postedFile.FileName).Take(10).ToArray()).Replace(" ", "-");
-                //imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(postedFile.FileName);
-                //var filePath = HttpContext.Current.Server.MapPath("~/Image/" + imageName);
-                //postedFile.SaveAs(filePath);
-
-                //Image image = new Image()
-                //{
-                //    //Title = model.Title,
-                //    File_Name = imageName,
-                //    //URI = "~/Image/" + imageName
-                //    //ImageCaption = httpRequest["ImageCaption"],
-                //};
-
                 model.Created_Date = DateTime.Now;
-                //model.ImageID = image.ID;
-                //_db.Image.Add(image);
                 _db.Movie.Add(model);
                 await _db.SaveChangesAsync();
                 return Request.CreateResponse(HttpStatusCode.Created);
             }
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+        }
+
+        [HttpGet, Route("{id:int}/images")]
+        public async Task<IEnumerable<string>> Images(int id)
+        {
+            var query = "SELECT '~/Images' + File_Name FROM Images Where ID IN " +
+                "(Select ImageID From Movie_Image Where MovieID = @p0)";
+
+            var images = await _db.Database.SqlQuery<string>(query, id).ToListAsync();
+            return images;
+        }
+
+        [HttpPost, Route("{id:int}/upload-images")]
+        public HttpResponseMessage UploadImage(int id)
+        {
+            string imageName = null;
+            var httpRequest = HttpContext.Current.Request;
+            //Upload Image
+            var postedFile = httpRequest.Files["Image"];
+            //Check if file is uploaded
+            if (postedFile == null)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Select Image");
+
+            //Create custom filename
+            imageName = new String(Path.GetFileNameWithoutExtension(postedFile.FileName).Take(10).ToArray()).Replace(" ", "-");
+            imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(postedFile.FileName);
+            var filePath = HttpContext.Current.Server.MapPath("~/Image/" + imageName);
+            postedFile.SaveAs(filePath);
+
+            Image image = new Image()
+            {
+                File_Name = imageName,
+            };
+
+            throw new NotImplementedException();
         }
 
         // PUT: api/Movies/5
