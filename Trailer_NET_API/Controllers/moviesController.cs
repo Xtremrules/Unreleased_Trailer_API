@@ -150,12 +150,35 @@ namespace Trailer_NET_API.Controllers
         {
             if (ModelState.IsValid)
             {
+                string imageName = null;
+                var httpRequest = HttpContext.Current.Request;
+                //Upload Image
+                var postedFile = httpRequest.Files["Image"];
+                //Check if file is uploaded
+                if (postedFile == null)
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Select Image");
+
+                //Create custom filename
+                imageName = new String(Path.GetFileNameWithoutExtension(postedFile.FileName).Take(10).ToArray()).Replace(" ", "-");
+                imageName = imageName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(postedFile.FileName);
+                var filePath = HttpContext.Current.Server.MapPath("~/Image/" + imageName);
+                postedFile.SaveAs(filePath);
+
+                Image image = new Image()
+                {
+                    File_Name = imageName,
+                };
+
+                model.ImageID = image.ID;
                 model.Created_Date = DateTime.Now;
                 _db.Movie.Add(model);
+                _db.Image.Add(image);
                 await _db.SaveChangesAsync();
-                return Request.CreateResponse(HttpStatusCode.Created);
+                //return Request.CreateResponse(HttpStatusCode.Created);
+                throw new NotImplementedException();
             }
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            //return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            throw new NotImplementedException();
         }
 
         [HttpGet, Route("{id:int}/images")]
