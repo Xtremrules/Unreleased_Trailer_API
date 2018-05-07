@@ -13,7 +13,7 @@ namespace Trailer_NET_DL.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201805032137496_initial"; }
+            get { return "201805070626572_initial"; }
         }
         
         string IMigrationMetadata.Source
