@@ -11,10 +11,13 @@ namespace Trailer_NET_API.Controllers
     {
         AppDbContext _db = new AppDbContext();
 
-        public async Task<IEnumerable<Image>> get(int id)
+        public async Task<IEnumerable<string>> get(int id)
         {
-            var query = "SELECT * FROM Image WHERE MovieID = @p0";
-            return await _db.Image.SqlQuery(query, id).ToListAsync();
+            var url = Url.Content("~/images/");
+            //var query = "SELECT @p0 + File_Name FROM Image WHERE MovieID = @p1";
+            var query = "SELECT @p0 + File_Name FROM Images WHERE ID IN " +
+                "(Select ImageID From Movie_Image Where MovieID = @p1)";
+            return await _db.Database.SqlQuery<string>(query, url, id).ToListAsync();
         }
     }
 }

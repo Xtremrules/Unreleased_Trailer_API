@@ -24,7 +24,7 @@ namespace Trailer_NET_API.Controllers
         // GET: api/Movies including released
         public async Task<IEnumerable<Movie>> GetAll()
         {
-            return await  _db.Movie.ToListAsync();
+            return await _db.Movie.ToListAsync();
         }
 
         [Route(""), HttpGet]
@@ -111,7 +111,7 @@ namespace Trailer_NET_API.Controllers
         [HttpGet, Route("liked/{userid}")]
         public async Task<IEnumerable<Movie>> GetLiked([FromBody]string UserID)
         {
-            var query = "SELECT * FROM Movies Where ID IN " + 
+            var query = "SELECT * FROM Movies Where ID IN " +
                 "( SELECT MovieID FROM Liked_Table Where UserID = @p0 )";
 
             return await _db.Movie.SqlQuery(query, UserID).ToListAsync();
@@ -161,10 +161,11 @@ namespace Trailer_NET_API.Controllers
         [HttpGet, Route("{id:int}/images")]
         public async Task<IEnumerable<string>> Images(int id)
         {
-            var query = "SELECT '~/Images' + File_Name FROM Images Where ID IN " +
-                "(Select ImageID From Movie_Image Where MovieID = @p0)";
+            var url = Url.Content("~/images/");
+            var query = "SELECT @p0 + File_Name FROM Images WHERE ID IN " +
+                "(Select ImageID From Movie_Image Where MovieID = @p1)";
 
-            var images = await _db.Database.SqlQuery<string>(query, id).ToListAsync();
+            var images = await _db.Database.SqlQuery<string>(query, url, id).ToListAsync();
             return images;
         }
 
@@ -194,6 +195,7 @@ namespace Trailer_NET_API.Controllers
         }
 
         // PUT: api/Movies/5
+        //[HttpPut, Route("{id}")]
         public IHttpActionResult Put(int id, [FromBody]Movie model)
         {
             if (ModelState.IsValid)
