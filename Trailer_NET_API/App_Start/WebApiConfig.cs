@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using System.Web.Http.Cors;
 using System.Web.Http.Filters;
 
 namespace Trailer_NET_API
@@ -13,7 +14,8 @@ namespace Trailer_NET_API
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
-
+            //config.EnableCors(new EnableCorsAttribute("http://localhost:4200", headers: "*", methods: "*"));
+            config.EnableCors(new EnableCorsAttribute("*", headers: "*", methods: "*"));
             // Web API routes
             config.MapHttpAttributeRoutes();
 
