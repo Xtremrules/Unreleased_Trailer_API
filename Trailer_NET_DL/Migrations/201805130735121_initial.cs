@@ -21,9 +21,7 @@ namespace Trailer_NET_DL.Migrations
                 c => new
                     {
                         ID = c.Int(nullable: false, identity: true),
-                        Title = c.String(),
                         File_Name = c.String(),
-                        URI = c.String(),
                     })
                 .PrimaryKey(t => t.ID);
             
