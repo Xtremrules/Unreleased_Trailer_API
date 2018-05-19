@@ -21,9 +21,10 @@ namespace Trailer_NET_Library.Entities
         public int? GenreID { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime Release_Date { get; set; }
+        public DateTime? Release_Date { get; set; }
+        [Required]
         public string Trailer_Url { get; set; }
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         public DateTime Created_Date { get; set; }
 
         [ForeignKey("ImageID")]
