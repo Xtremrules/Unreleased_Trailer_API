@@ -31,7 +31,7 @@ namespace Trailer_NET_API.Controllers
         // GET: api/Movies
         public async Task<IEnumerable<Movie>> Get()
         {
-            var query = "SELECT TOP 10 * FROM Movies WHERE @P0 <= Release_Date";
+            var query = "SELECT TOP 10 * FROM Movies WHERE (@P0 <= Release_Date OR Release_Date IS NULL)";
             return await _db.Database.SqlQuery<Movie>(query, DateTime.Now).ToListAsync();
         }
 
@@ -46,7 +46,7 @@ namespace Trailer_NET_API.Controllers
         [HttpGet, Route("paging")]
         public async Task<IEnumerable<Movie>> Get([FromUri]PagingParameterModel model)
         {
-            var query = "SELECT * FROM Movies WHERE @P0 <= Release_Date";
+            var query = "SELECT * FROM Movies WHERE (@P0 <= Release_Date OR Release_Date IS NULL)";
 
             // Return List of Movies  
             var source = await _db.Movie.SqlQuery(query, DateTime.Now).ToListAsync();
@@ -93,9 +93,9 @@ namespace Trailer_NET_API.Controllers
         }
 
         [HttpGet, Route("search/{q}/{key}")]
-        public async Task<IEnumerable<Movie>> Get([FromBody]string q, string key = null)
+        public async Task<IEnumerable<Movie>> Get(string q, string key = null)
         {
-            var query = "SELECT * FROM Movies WHERE @P0 <= Release_Date And Title like '%@p1%'";
+            var query = "SELECT * FROM Movies WHERE (@P0 <= Release_Date OR Release_Date IS NULL) And Title like '%@p1%'";
             var queryKey = "SELECT * FROM Movies Where Title like '%@p0%'";
 
             var movies = new List<Movie>();
@@ -109,7 +109,7 @@ namespace Trailer_NET_API.Controllers
         }
 
         [HttpGet, Route("liked/{userid}")]
-        public async Task<IEnumerable<Movie>> GetLiked([FromBody]string UserID)
+        public async Task<IEnumerable<Movie>> GetLiked(string UserID)
         {
             var query = "SELECT * FROM Movies Where ID IN " +
                 "( SELECT MovieID FROM Liked_Table Where UserID = @p0 )";
@@ -118,7 +118,7 @@ namespace Trailer_NET_API.Controllers
         }
 
         [HttpGet, Route("liked-number/{userid}")]
-        public string GetLiked_Number([FromBody]string UserID)
+        public string GetLiked_Number(string UserID)
         {
             var query = "SELECT Count(*) FROM Movies Where ID IN " +
                 "( SELECT MovieID FROM Liked_Table Where UserID = @p0 )";
@@ -126,8 +126,8 @@ namespace Trailer_NET_API.Controllers
             return _db.Database.SqlQuery<string>(query, UserID).ToString();
         }
 
-        [HttpGet, Route("released-liked")]
-        public async Task<IEnumerable<Movie>> Get_Liked_released([FromBody]string UserId)
+        [HttpGet, Route("released-liked/{userid}")]
+        public async Task<IEnumerable<Movie>> Get_Liked_released(string UserId)
         {
             var query = "SELECT * FROM Movies Where Release_Date >= @p0 AND ID IN " +
                 "( SELECT MovieID FROM Liked_Table Where UserID = @p1 )";
