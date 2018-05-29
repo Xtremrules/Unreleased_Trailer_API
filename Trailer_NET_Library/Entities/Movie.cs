@@ -22,7 +22,7 @@ namespace Trailer_NET_Library.Entities
 
         [DataType(DataType.Date)]
         public DateTime? Release_Date { get; set; }
-        [Required]
+        [Required, Column("Youtube_Video_Id")]
         public string Trailer_Url { get; set; }
         [DataType(DataType.Date)]
         public DateTime Created_Date { get; set; }
