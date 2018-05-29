@@ -3,7 +3,7 @@ namespace Trailer_NET_DL.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class initial : DbMigration
+    public partial class Initial : DbMigration
     {
         public override void Up()
         {
@@ -37,9 +37,9 @@ namespace Trailer_NET_DL.Migrations
                         Producer = c.String(),
                         ImageID = c.Int(),
                         GenreID = c.Int(),
-                        Release_Date = c.DateTime(nullable: false),
-                        Trailer_Url = c.String(),
-                        Created_Date = c.DateTime(nullable: false),
+                        Release_Date = c.DateTime(),
+                        Youtube_Video_Id = c.String(nullable: false),
+                        Created_Date = c.DateTime(),
                     })
                 .PrimaryKey(t => t.ID)
                 .ForeignKey("dbo.Genres", t => t.GenreID)

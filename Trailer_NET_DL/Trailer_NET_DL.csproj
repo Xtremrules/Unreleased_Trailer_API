@@ -98,13 +98,9 @@
     <Compile Include="Infrastructure\IDbFactory.cs" />
     <Compile Include="Infrastructure\IUnitOfWork.cs" />
     <Compile Include="Infrastructure\UnitOfWork.cs" />
-    <Compile Include="Migrations\201805130735121_initial.cs" />
-    <Compile Include="Migrations\201805130735121_initial.Designer.cs">
-      <DependentUpon>201805130735121_initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201805192023371_someReq.cs" />
-    <Compile Include="Migrations\201805192023371_someReq.Designer.cs">
-      <DependentUpon>201805192023371_someReq.cs</DependentUpon>
+    <Compile Include="Migrations\201805290213497_Initial.cs" />
+    <Compile Include="Migrations\201805290213497_Initial.Designer.cs">
+      <DependentUpon>201805290213497_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -123,11 +119,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201805130735121_initial.resx">
-      <DependentUpon>201805130735121_initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805192023371_someReq.resx">
-      <DependentUpon>201805192023371_someReq.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201805290213497_Initial.resx">
+      <DependentUpon>201805290213497_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
