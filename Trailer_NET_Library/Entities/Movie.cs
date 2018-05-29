@@ -25,7 +25,7 @@ namespace Trailer_NET_Library.Entities
         [Required, Column("Youtube_Video_Id")]
         public string Trailer_Url { get; set; }
         [DataType(DataType.Date)]
-        public DateTime Created_Date { get; set; }
+        public DateTime? Created_Date { get; set; }
 
         [ForeignKey("ImageID")]
         public virtual Image Image { get; set; }
