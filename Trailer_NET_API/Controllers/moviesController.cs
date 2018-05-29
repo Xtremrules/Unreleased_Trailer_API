@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Http;
 using Trailer_NET_API.Models;
@@ -150,6 +151,15 @@ namespace Trailer_NET_API.Controllers
         {
             if (ModelState.IsValid)
             {
+                var req = "^(http(s)??\\:\\/\\/)?(www\\.|m\\.)?((youtube\\.com\\/watch\\?v=)|(youtu.be\\/))([a-zA-Z0-9\\-_]{11})$";
+                var regex = new Regex(req, RegexOptions.None).Match(model.Trailer_Url);
+
+                if (!regex.Success)
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Not a youtube link");
+
+                // Gets the Video ID
+                model.Trailer_Url = model.Trailer_Url.Substring(regex.Length - 11);
+
                 model.Created_Date = DateTime.Now;
                 _db.Movie.Add(model);
                 await _db.SaveChangesAsync();
