@@ -9,6 +9,6 @@ namespace Trailer_NET_Library.Entities
         public string File_Name { get; set; }
         //public string URI { get; set; }
 
-        public virtual ICollection<Movie> Movies { get; set; }
+        //public virtual ICollection<Movie> Movies { get; set; }
     }
 }

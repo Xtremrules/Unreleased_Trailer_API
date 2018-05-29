@@ -17,7 +17,8 @@ namespace Trailer_NET_Library.Entities
         public string Writer { get; set; }
         public string Producer { get; set; }
 
-        public int? ImageID { get; set; }
+        [NotMapped]
+        public string Image_Url { get; set; }
         public int? GenreID { get; set; }
 
         [DataType(DataType.Date)]
@@ -27,11 +28,11 @@ namespace Trailer_NET_Library.Entities
         [DataType(DataType.Date)]
         public DateTime? Created_Date { get; set; }
 
-        [ForeignKey("ImageID")]
-        public virtual Image Image { get; set; }
+        //[ForeignKey("ImageID")]
+        //public virtual Image Image { get; set; }
         [ForeignKey("GenreID")]
         public virtual Genre Genre { get; set; }
 
-        public virtual ICollection<Image> Images { get; set; }
+        //public virtual ICollection<Image> Images { get; set; }
     }
 }
