@@ -3,7 +3,7 @@ namespace Trailer_NET_DL.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Initial : DbMigration
+    public partial class initial : DbMigration
     {
         public override void Up()
         {
@@ -35,16 +35,13 @@ namespace Trailer_NET_DL.Migrations
                         Director = c.String(),
                         Writer = c.String(),
                         Producer = c.String(),
-                        ImageID = c.Int(),
                         GenreID = c.Int(),
                         Release_Date = c.DateTime(),
-                        Youtube_Video_Id = c.String(nullable: false),
+                        Youtube_Video_Id = c.String(nullable: false, maxLength: 15),
                         Created_Date = c.DateTime(),
                     })
                 .PrimaryKey(t => t.ID)
                 .ForeignKey("dbo.Genres", t => t.GenreID)
-                .ForeignKey("dbo.Images", t => t.ImageID)
-                .Index(t => t.ImageID)
                 .Index(t => t.GenreID);
             
             CreateTable(
@@ -116,19 +113,6 @@ namespace Trailer_NET_DL.Migrations
                 .Index(t => t.UserId);
             
             CreateTable(
-                "dbo.Movie_Image",
-                c => new
-                    {
-                        MovieID = c.Int(nullable: false),
-                        ImageID = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => new { t.MovieID, t.ImageID })
-                .ForeignKey("dbo.Movies", t => t.MovieID, cascadeDelete: true)
-                .ForeignKey("dbo.Images", t => t.ImageID, cascadeDelete: true)
-                .Index(t => t.MovieID)
-                .Index(t => t.ImageID);
-            
-            CreateTable(
                 "dbo.Liked_Table",
                 c => new
                     {
@@ -166,16 +150,11 @@ namespace Trailer_NET_DL.Migrations
             DropForeignKey("dbo.Liked_Table", "UserId", "dbo.Users");
             DropForeignKey("dbo.User_Claims", "UserId", "dbo.Users");
             DropForeignKey("dbo.User_Roles", "RoleId", "dbo.Roles");
-            DropForeignKey("dbo.Movie_Image", "ImageID", "dbo.Images");
-            DropForeignKey("dbo.Movie_Image", "MovieID", "dbo.Movies");
-            DropForeignKey("dbo.Movies", "ImageID", "dbo.Images");
             DropForeignKey("dbo.Movies", "GenreID", "dbo.Genres");
             DropIndex("dbo.Watch_Later_Table", new[] { "MovieID" });
             DropIndex("dbo.Watch_Later_Table", new[] { "UserId" });
             DropIndex("dbo.Liked_Table", new[] { "MovieID" });
             DropIndex("dbo.Liked_Table", new[] { "UserId" });
-            DropIndex("dbo.Movie_Image", new[] { "ImageID" });
-            DropIndex("dbo.Movie_Image", new[] { "MovieID" });
             DropIndex("dbo.User_Logins", new[] { "UserId" });
             DropIndex("dbo.User_Claims", new[] { "UserId" });
             DropIndex("dbo.Users", "UserNameIndex");
@@ -183,10 +162,8 @@ namespace Trailer_NET_DL.Migrations
             DropIndex("dbo.User_Roles", new[] { "UserId" });
             DropIndex("dbo.Roles", "RoleNameIndex");
             DropIndex("dbo.Movies", new[] { "GenreID" });
-            DropIndex("dbo.Movies", new[] { "ImageID" });
             DropTable("dbo.Watch_Later_Table");
             DropTable("dbo.Liked_Table");
-            DropTable("dbo.Movie_Image");
             DropTable("dbo.User_Logins");
             DropTable("dbo.User_Claims");
             DropTable("dbo.Users");
