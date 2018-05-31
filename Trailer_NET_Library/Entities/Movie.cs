@@ -12,19 +12,14 @@ namespace Trailer_NET_Library.Entities
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
-
         public string Director { get; set; }
         public string Writer { get; set; }
         public string Producer { get; set; }
-
-        [NotMapped]
-        public string Image_Url { get; set; }
         public int? GenreID { get; set; }
-
         [DataType(DataType.Date)]
         public DateTime? Release_Date { get; set; }
-        [Required, Column("Youtube_Video_Id")]
-        public string Trailer_Url { get; set; }
+        [Required, MaxLength(15)]
+        public string Youtube_Video_Id { get; set; }
         [DataType(DataType.Date)]
         public DateTime? Created_Date { get; set; }
 

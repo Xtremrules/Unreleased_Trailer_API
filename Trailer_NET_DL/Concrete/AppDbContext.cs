@@ -20,8 +20,8 @@ namespace Trailer_NET_DL.Concrete
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Movie>().HasMany(x => x.Images).WithMany(x => x.Movies)
-                .Map(x => x.MapRightKey("ImageID").MapLeftKey("MovieID").ToTable("Movie_Image"));
+            //modelBuilder.Entity<Movie>().HasMany(x => x.Images).WithMany(x => x.Movies)
+            //    .Map(x => x.MapRightKey("ImageID").MapLeftKey("MovieID").ToTable("Movie_Image"));
 
             modelBuilder.Entity<AppUser>().ToTable("Users").Property(x => x.Id).HasColumnName("UserId");
             modelBuilder.Entity<IdentityUserRole>().ToTable("User_Roles");
