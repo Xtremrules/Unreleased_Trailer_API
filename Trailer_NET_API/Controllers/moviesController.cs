@@ -23,17 +23,24 @@ namespace Trailer_NET_API.Controllers
 
         [Route("all-with-released-movies"), HttpGet]
         // GET: api/Movies including released
-        public async Task<IEnumerable<Movie>> GetAll()
+        public async Task<IEnumerable<Models.Movie>> GetAll()
         {
-            return await _db.Movie.ToListAsync();
+            var moviesDb = await _db.Movie.ToListAsync();
+
+            var movies = AutoMapper.Mapper.Map<IEnumerable<Models.Movie>>(moviesDb);
+
+            return movies;
         }
 
         [Route(""), HttpGet]
         // GET: api/Movies
-        public async Task<IEnumerable<Movie>> Get()
+        public async Task<IEnumerable<Models.Movie>> Get()
         {
             var query = "SELECT TOP 10 * FROM Movies WHERE (@P0 <= Release_Date OR Release_Date IS NULL)";
-            return await _db.Database.SqlQuery<Movie>(query, DateTime.Now).ToListAsync();
+            var result =  await _db.Database.SqlQuery<Trailer_NET_Library.Entities.Movie>(query, DateTime.Now).ToListAsync();
+            var result2 = AutoMapper.Mapper.Map<IEnumerable<Models.Movie>>(result);
+
+            return result2;
         }
 
         //[Route("/{id}"), HttpGet]
@@ -41,11 +48,12 @@ namespace Trailer_NET_API.Controllers
         public async Task<IHttpActionResult> Get(int id)
         {
             var query = "SELECT TOP 1 * FROM Movies WHERE ID = @p0";
-            return Ok(await _db.Movie.SqlQuery(query, id).FirstOrDefaultAsync());
+            var m = await _db.Movie.SqlQuery(query, id).FirstOrDefaultAsync();
+            return Ok(AutoMapper.Mapper.Map<Models.Movie>(m));
         }
 
         [HttpGet, Route("paging")]
-        public async Task<IEnumerable<Movie>> Get([FromUri]PagingParameterModel model)
+        public async Task<IEnumerable<Models.Movie>> Get([FromUri]PagingParameterModel model)
         {
             var query = "SELECT * FROM Movies WHERE (@P0 <= Release_Date OR Release_Date IS NULL)";
 
@@ -89,33 +97,38 @@ namespace Trailer_NET_API.Controllers
 
             // Setting Header  
             HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
-            // Returing List of Customers Collections  
-            return items;
+            // Returing List of Customers Collections
+            var result = AutoMapper.Mapper.Map<IEnumerable<Models.Movie>>(items);
+            return result;
         }
 
         [HttpGet, Route("search/{q}/{key}")]
-        public async Task<IEnumerable<Movie>> Get(string q, string key = null)
+        public async Task<IEnumerable<Models.Movie>> Get(string q, string key = null)
         {
             var query = "SELECT * FROM Movies WHERE (@P0 <= Release_Date OR Release_Date IS NULL) And Title like '%@p1%'";
             var queryKey = "SELECT * FROM Movies Where Title like '%@p0%'";
 
-            var movies = new List<Movie>();
+            var movies = new List<Trailer_NET_Library.Entities.Movie>();
 
             if (key != null)
                 movies = await _db.Movie.SqlQuery(query, DateTime.Now, q).ToListAsync();
             else
                 movies = await _db.Movie.SqlQuery(queryKey, q).ToListAsync();
-
-            return movies;
+            var result = AutoMapper.Mapper.Map<IEnumerable<Models.Movie>>(movies);
+            return result;
         }
 
         [HttpGet, Route("liked/{userid}")]
-        public async Task<IEnumerable<Movie>> GetLiked(string UserID)
+        public async Task<IEnumerable<Models.Movie>> GetLiked(string UserID)
         {
             var query = "SELECT * FROM Movies Where ID IN " +
                 "( SELECT MovieID FROM Liked_Table Where UserID = @p0 )";
 
-            return await _db.Movie.SqlQuery(query, UserID).ToListAsync();
+            var results = await _db.Movie.SqlQuery(query, UserID).ToListAsync();
+
+            var results2 = AutoMapper.Mapper.Map<IEnumerable<Models.Movie>>(results);
+
+            return results2;
         }
 
         [HttpGet, Route("liked-number/{userid}")]
@@ -128,12 +141,13 @@ namespace Trailer_NET_API.Controllers
         }
 
         [HttpGet, Route("released-liked/{userid}")]
-        public async Task<IEnumerable<Movie>> Get_Liked_released(string UserId)
+        public async Task<IEnumerable<Models.Movie>> Get_Liked_released(string UserId)
         {
             var query = "SELECT * FROM Movies Where Release_Date >= @p0 AND ID IN " +
                 "( SELECT MovieID FROM Liked_Table Where UserID = @p1 )";
-
-            return await _db.Movie.SqlQuery(query, DateTime.Now, UserId).ToListAsync();
+            var results = await _db.Movie.SqlQuery(query, DateTime.Now, UserId).ToListAsync(); ;
+            var results2 = AutoMapper.Mapper.Map<IEnumerable<Models.Movie>>(results);
+            return results2;
         }
 
         [HttpPost, Route("add-liked")]
@@ -147,21 +161,18 @@ namespace Trailer_NET_API.Controllers
 
         [HttpPost, Route("")]
         // POST: api/Movies
-        public async Task<HttpResponseMessage> Post([FromBody]Movie model)
+        public async Task<HttpResponseMessage> Post([FromBody]Models.Movie model)
         {
             if (ModelState.IsValid)
             {
-                var req = "^(http(s)??\\:\\/\\/)?(www\\.|m\\.)?((youtube\\.com\\/watch\\?v=)|(youtu.be\\/))([a-zA-Z0-9\\-_]{11})$";
-                var regex = new Regex(req, RegexOptions.None).Match(model.Trailer_Url);
-
-                if (!regex.Success)
-                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Not a youtube link");
-
                 // Gets the Video ID
-                model.Trailer_Url = model.Trailer_Url.Substring(regex.Length - 11);
+                model.Trailer_Url = model.Trailer_Url.Substring(model.Trailer_Url.Length - 11);
 
                 model.Created_Date = DateTime.Now;
-                _db.Movie.Add(model);
+
+                var movie = AutoMapper.Mapper.Map<Trailer_NET_Library.Entities.Movie>(model);
+
+                _db.Movie.Add(movie);
                 await _db.SaveChangesAsync();
                 return Request.CreateResponse(HttpStatusCode.Created);
             }
@@ -206,11 +217,11 @@ namespace Trailer_NET_API.Controllers
 
         // PUT: api/Movies/5
         //[HttpPut, Route("{id}")]
-        public IHttpActionResult Put(int id, [FromBody]Movie model)
+        public IHttpActionResult Put(int id, [FromBody]Models.Movie model)
         {
             if (ModelState.IsValid)
             {
-                _db.Entry(model).State = EntityState.Modified;
+                _db.Entry(AutoMapper.Mapper.Map<Trailer_NET_Library.Entities.Movie>(model)).State = EntityState.Modified;
                 return Ok();
             }
             return BadRequest(ModelState);
